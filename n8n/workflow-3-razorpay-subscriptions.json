@@ -1,0 +1,67 @@
+{
+  "name": "FocusFlow — Razorpay Subscription Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "focusflow/razorpay",
+        "responseMode": "onReceived",
+        "options": { "rawBody": true }
+      },
+      "name": "Razorpay Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const crypto = require('crypto');\nconst signature = $node['Razorpay Webhook'].json.headers['x-razorpay-signature'];\nconst body = $node['Razorpay Webhook'].json.body;\nconst expected = crypto.createHmac('sha256', $env.RAZORPAY_WEBHOOK_SECRET).update(JSON.stringify(body)).digest('hex');\nif (signature !== expected) throw new Error('Invalid signature');\nreturn [{ json: body }];"
+      },
+      "name": "Verify signature",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            { "conditions": [{ "value1": "={{$json.event}}", "operation": "equals", "value2": "subscription.activated" }], "outputKey": "activated" },
+            { "conditions": [{ "value1": "={{$json.event}}", "operation": "equals", "value2": "subscription.charged" }], "outputKey": "charged" },
+            { "conditions": [{ "value1": "={{$json.event}}", "operation": "equals", "value2": "subscription.cancelled" }], "outputKey": "cancelled" },
+            { "conditions": [{ "value1": "={{$json.event}}", "operation": "equals", "value2": "payment.failed" }], "outputKey": "failed" }
+          ]
+        }
+      },
+      "name": "Route by event",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "operation": "upsert",
+        "tableId": "subscriptions",
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldId": "user_id", "fieldValue": "={{$json.payload.subscription.entity.notes.user_id}}" },
+            { "fieldId": "plan", "fieldValue": "={{$json.payload.subscription.entity.notes.plan}}" },
+            { "fieldId": "status", "fieldValue": "={{$json.event}}" },
+            { "fieldId": "razorpay_subscription_id", "fieldValue": "={{$json.payload.subscription.entity.id}}" }
+          ]
+        }
+      },
+      "name": "Upsert subscription",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [960, 300]
+    }
+  ],
+  "connections": {
+    "Razorpay Webhook": { "main": [[{ "node": "Verify signature", "type": "main", "index": 0 }]] },
+    "Verify signature": { "main": [[{ "node": "Route by event", "type": "main", "index": 0 }]] },
+    "Route by event": { "main": [[{ "node": "Upsert subscription", "type": "main", "index": 0 }]] }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "name": "FocusFlow — AI Priority Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "focusflow/priority",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "operation": "getAll",
+        "tableId": "tasks",
+        "returnAll": false,
+        "filters": {
+          "conditions": [
+            { "keyName": "user_id", "condition": "eq", "keyValue": "={{$json.user_id}}" },
+            { "keyName": "status", "condition": "neq", "keyValue": "done" }
+          ]
+        }
+      },
+      "name": "Fetch active tasks",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "temperature": 0.2,
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are FocusFlow's prioritization engine. Given a list of tasks, identify the THREE highest-impact tasks the user should complete today based on urgency, importance, deadline proximity, estimated effort, and expected outcome. Return strict JSON: {\"top3\":[{\"task_id\":string,\"score\":number,\"reason\":string},{...},{...}]}"
+            },
+            {
+              "role": "user",
+              "content": "={{ JSON.stringify($json) }}"
+            }
+          ]
+        }
+      },
+      "name": "OpenAI GPT-4o",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "operation": "upsert",
+        "tableId": "daily_priorities",
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldId": "user_id", "fieldValue": "={{$node[\"Webhook\"].json.user_id}}" },
+            { "fieldId": "date", "fieldValue": "={{ new Date().toISOString().slice(0,10) }}" },
+            { "fieldId": "priority_one", "fieldValue": "={{ $json.top3[0] }}" },
+            { "fieldId": "priority_two", "fieldValue": "={{ $json.top3[1] }}" },
+            { "fieldId": "priority_three", "fieldValue": "={{ $json.top3[2] }}" }
+          ]
+        }
+      },
+      "name": "Save Top 3",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [960, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Fetch active tasks", "type": "main", "index": 0 }]] },
+    "Fetch active tasks": { "main": [[{ "node": "OpenAI GPT-4o", "type": "main", "index": 0 }]] },
+    "OpenAI GPT-4o": { "main": [[{ "node": "Save Top 3", "type": "main", "index": 0 }]] }
+  }
+}
