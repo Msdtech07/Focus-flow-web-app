@@ -59,7 +59,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Try again
           </button>
-          
+
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
@@ -128,72 +128,77 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  console.log('VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
-  console.log('VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY?.substring(0, 30) + '...');
-  
+  // ✅ Removed debug console.logs that were leaking env vars to the browser
+
   const { queryClient } = Route.useRouteContext();
   const navigate = useNavigate();
   const { setUser } = useAppStore();
 
   useEffect(() => {
-    // First, get current session
-    if (typeof window !== "undefined") {
-      try {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          if (session?.user) {
-            setUser({
-              id: session.user.id,
-              email: session.user.email!,
-              full_name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "User",
-              avatar_url: session.user.user_metadata?.avatar_url,
-              plan: "free",
-              created_at: session.user.created_at,
-            });
-          }
-        }).catch(e => console.error('Error getting session:', e));
-      } catch (e) {
-        console.error('Error initializing auth:', e);
-      }
+    if (typeof window === "undefined") return;
 
-      try {
-        // Handle Google OAuth callback
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-          if (event === "SIGNED_IN" && session?.user) {
-            setUser({
-              id: session.user.id,
-              email: session.user.email!,
-              full_name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "User",
-              avatar_url: session.user.user_metadata?.avatar_url,
-              plan: "free",
-              created_at: session.user.created_at,
-            });
-            
-            // Only redirect if currently on login/register/auth pages
-            const path = window.location.pathname;
-            const isAuthPage = ["/login", "/register", "/auth/callback"].includes(path);
-            if (isAuthPage) {
-              navigate({ to: "/app/today" });
-            }
-          }
+    // Get current session on mount
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email!,
+            full_name:
+              session.user.user_metadata?.full_name ||
+              session.user.email?.split("@")[0] ||
+              "User",
+            avatar_url: session.user.user_metadata?.avatar_url,
+            plan: "free",
+            created_at: session.user.created_at,
+          });
+        }
+      })
+      .catch((e) => console.error("Error getting session:", e));
 
-          if (event === "SIGNED_OUT") {
-            setUser(null);
-            navigate({ to: "/login" });
-          }
+    // Subscribe to auth state changes
+    let subscription: { unsubscribe: () => void } | null = null;
+    try {
+      const { data } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_IN" && session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email!,
+            full_name:
+              session.user.user_metadata?.full_name ||
+              session.user.email?.split("@")[0] ||
+              "User",
+            avatar_url: session.user.user_metadata?.avatar_url,
+            plan: "free",
+            created_at: session.user.created_at,
+          });
 
-          if (event === "PASSWORD_RECOVERY") {
-            navigate({ to: "/forgot-password" });
+          // Redirect away from auth pages after sign-in
+          const path = window.location.pathname;
+          const isAuthPage = ["/login", "/register", "/auth/callback"].includes(path);
+          if (isAuthPage) {
+            navigate({ to: "/app/today" });
           }
-        });
+        }
 
-        return () => {
-          subscription.unsubscribe();
-        };
-      } catch (e) {
-        console.error('Error setting up auth state change listener:', e);
-        return;
-      }
+        if (event === "SIGNED_OUT") {
+          setUser(null);
+          navigate({ to: "/login" });
+        }
+
+        if (event === "PASSWORD_RECOVERY") {
+          navigate({ to: "/forgot-password" });
+        }
+      });
+      subscription = data.subscription;
+    } catch (e) {
+      console.error("Error setting up auth state change listener:", e);
     }
+
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, [navigate, setUser]);
 
   return (

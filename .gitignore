@@ -7,18 +7,31 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+
+# Build outputs
 dist
 dist-ssr
 .output
 .vinxi
-.tanstack/**
 .nitro
+
+# TanStack / Vite generated files
+.tanstack/
+
+# Environment files — NEVER commit these
 *.local
+.env
+.env.*
+!.env.example
 
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+
+# Package manager lockfile — keep only ONE (this project uses bun)
+package-lock.json
 
 # Editor directories and files
 .vscode/*
