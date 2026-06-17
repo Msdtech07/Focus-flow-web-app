@@ -28,7 +28,7 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "coming soon",
+    price: "TBD",
     period: "/month",
     desc: "For serious operators.",
     features: ["Unlimited tasks", "Unlimited AI prioritizations", "Productivity analytics", "Advanced insights", "Priority support"],
@@ -37,7 +37,7 @@ const plans = [
   },
   {
     name: "Team",
-    price: "₹coming soon",
+    price: "TBD",
     period: "/user / month",
     desc: "For small focused teams.",
     features: ["Everything in Pro", "Team workspaces", "Shared priorities", "Team analytics", "Admin controls"],
