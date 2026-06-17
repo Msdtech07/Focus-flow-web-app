@@ -20,16 +20,16 @@ export const Route = createFileRoute("/pricing")({
 const plans = [
   {
     name: "Free",
-    price: "₹0",
-    period: "forever",
+    price: "$0",
+    period: "",
     desc: "For getting started.",
     features: ["25 active tasks", "Limited AI prioritizations", "Reflection journal", "Basic streak tracking"],
     cta: "Start free",
   },
   {
     name: "Pro",
-    price: "TBD",
-    period: "/month",
+    price: "Coming soon",
+    period: "",
     desc: "For serious operators.",
     features: ["Unlimited tasks", "Unlimited AI prioritizations", "Productivity analytics", "Advanced insights", "Priority support"],
     cta: "Coming soon",
@@ -37,8 +37,8 @@ const plans = [
   },
   {
     name: "Team",
-    price: "TBD",
-    period: "/user / month",
+    price: "Coming soon",
+    period: "",
     desc: "For small focused teams.",
     features: ["Everything in Pro", "Team workspaces", "Shared priorities", "Team analytics", "Admin controls"],
     cta: "Coming soon",
@@ -64,7 +64,7 @@ function PricingPage() {
               <h3 className="text-lg font-semibold">{p.name}</h3>
               <p className="text-sm text-muted-foreground">{p.desc}</p>
               <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-bold">{p.price}</span>
+                <span className="text-2xl font-bold">{p.price}</span>
                 <span className="text-sm text-muted-foreground">{p.period}</span>
               </div>
               <ul className="mt-6 space-y-2.5 text-sm">
