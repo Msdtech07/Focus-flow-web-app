@@ -20,7 +20,7 @@ export const Route = createFileRoute("/pricing")({
 const plans = [
   {
     name: "Free",
-    price: "$0",
+    price: "Free",
     period: "",
     desc: "For getting started.",
     features: ["25 active tasks", "Limited AI prioritizations", "Reflection journal", "Basic streak tracking"],
