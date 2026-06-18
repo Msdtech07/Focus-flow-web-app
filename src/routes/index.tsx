@@ -295,23 +295,23 @@ function Pricing() {
   const plans = [
     {
       name: "Free",
-      price: "₹0",
-      period: "forever",
+      price: "Coming soon",
+      period: "",
       features: ["25 active tasks", "Limited AI prioritizations", "Reflection journal", "Basic streak tracking"],
       cta: "Start free",
     },
     {
       name: "Pro",
-      price: "₹199",
-      period: "/month",
+      price: "Coming soon",
+      period: "",
       features: ["Unlimited tasks", "Unlimited AI prioritizations", "Productivity analytics", "Priority support"],
       cta: "Coming soon",
       disabled: true,
     },
     {
       name: "Team",
-      price: "₹1199",
-      period: "/user / month",
+      price: "Coming soon",
+      period: "",
       features: ["Everything in Pro", "Team workspaces", "Shared priorities", "Team analytics", "Admin controls"],
       cta: "Coming soon",
       disabled: true,
@@ -332,7 +332,7 @@ function Pricing() {
               )}
               <h3 className="text-lg font-semibold">{p.name}</h3>
               <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-4xl font-bold">{p.price}</span>
+                <span className="text-2xl font-bold">{p.price}</span>
                 <span className="text-sm text-muted-foreground">{p.period}</span>
               </div>
               <ul className="mt-6 space-y-2.5 text-sm">

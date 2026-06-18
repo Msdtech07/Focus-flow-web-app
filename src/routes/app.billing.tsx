@@ -23,16 +23,16 @@ type PlanRow = {
 
 const plans: PlanRow[] = [
   {
-    key: "free", name: "Free", price: "₹0", period: "forever",
+    key: "free", name: "Free", price: "Coming soon", period: "",
     features: ["25 active tasks", "Limited AI prioritizations", "Reflection journal"],
   },
   {
-    key: "pro", name: "Pro", price: "₹199", period: "/month",
+    key: "pro", name: "Pro", price: "Coming soon", period: "",
     features: ["Unlimited tasks", "Unlimited AI prioritizations", "Analytics", "Priority support"],
     disabled: true,
   },
   {
-    key: "team", name: "Team", price: "₹1199", period: "/user / month",
+    key: "team", name: "Team", price: "Coming soon", period: "",
     features: ["Everything in Pro", "Team workspaces", "Shared priorities", "Admin controls"],
     disabled: true,
   },
@@ -69,7 +69,7 @@ function BillingPage() {
           <Card key={p.key} className={`relative p-6 ${p.featured ? "border-primary/60 shadow-brand" : "border-border/60"}`}>
             <h3 className="text-lg font-semibold">{p.name}</h3>
             <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-3xl font-bold">{p.price}</span>
+              <span className="text-2xl font-bold">{p.price}</span>
               <span className="text-sm text-muted-foreground">{p.period}</span>
             </div>
             <ul className="mt-5 space-y-2 text-sm">
