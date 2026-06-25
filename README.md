@@ -119,7 +119,7 @@ Reason: high priority
 
 ## 📈 Future Improvements
 
-* Switch the AI scoring mode (GPT-4o) to the default ranking engine
+* Switch the AI scoring mode (Groq + Llama 3) to the default ranking engine
 * Confidence/impact visualization for each task
 * Native mobile app
 * Calendar integration
@@ -135,7 +135,7 @@ Reason: high priority
 
 ## 👨‍💻 Author
 
-Developed by [Your Name] as a productivity SaaS project.
+Developed by Priyanshu Tiwari as a productivity SaaS project.
 
 ## 📜 License
 
