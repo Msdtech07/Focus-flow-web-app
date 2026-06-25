@@ -1,6 +1,6 @@
 # FocusFlow — Know Your Next 3 Moves 🎯✅
 
-A productivity web app that eliminates decision fatigue by analyzing your task list and surfacing the **3 highest-impact tasks** to focus on each day, with a calculated score and a plain-English reason for every pick. Built with React, TypeScript, and a Supabase backend, with an optional AI-powered scoring mode using OpenAI GPT-4o.
+A productivity web app that eliminates decision fatigue by analyzing your task list and surfacing the **3 highest-impact tasks** to focus on each day, with a calculated score and a plain-English reason for every pick. Built with React, TypeScript, and a Supabase backend, with an optional AI-powered scoring mode using Groq + Llama 3.
 
 ## 🚀 Features
 
@@ -12,7 +12,7 @@ A productivity web app that eliminates decision fatigue by analyzing your task l
 * Daily reflections log
 * Subscription billing (Pro / Team plans)
 * Automatic daily "Focus Email" sent every morning
-* Optional AI-powered scoring mode (GPT-4o) as an alternative to the fixed formula
+* Optional AI-powered scoring mode (Groq + Llama 3) as an alternative to the fixed formula
 
 ## 🛠️ Technologies Used
 
