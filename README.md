@@ -139,5 +139,5 @@ Developed by Priyanshu Tiwari as a productivity SaaS project.
 
 ## 📜 License
 
-No license has been set yet — all rights reserved by default. Add a `LICENSE` file (MIT is common for SaaS starters) if you plan to open-source this.
+No license has been set yet — all rights reserved by default. 
 
